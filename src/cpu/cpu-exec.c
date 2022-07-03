@@ -275,7 +275,7 @@ static int execute(int n) {
     cpu.pc = s.snpc;
 #ifdef CONFIG_SHARE
     if (unlikely(dynamic_config.debug_difftest)) {
-      fprintf(stderr, "(%d) [NEMU] pc = 0x%lx inst %x\n", getpid(), s.pc, s.isa.instr.val);
+      fprintf(stderr, "(%d) [NEMU] pc = 0x%x inst %x\n", getpid(), s.pc, s.isa.instr.val);
     }
 #endif
     s.EHelper(&s);
