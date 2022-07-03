@@ -1,0 +1,37 @@
+menu "ISA-dependent Options for riscv64"
+
+config CLINT_MMIO
+  hex "MMIO address of CLINT"
+  default 0xa2000000
+
+config MULTICORE_DIFF
+  bool "(Beta) Enable multi-core difftest APIs for RISC-V"
+  default false
+
+config RVB
+  bool "RISC-V Bitmanip Extension v1.0"
+  default y
+
+config RVK
+  bool "RISC-V Cryptography Extension v1.0"
+  default y
+
+config RVV_010
+  bool "Experimental RISC-V Vector Extension v0.10"
+
+config RV_PMP_CSR
+  bool "Enable PMP CSR Read & Write"
+  default y
+
+config RV_PMP_CHECK
+  # todo: pmp check still not work when enable PERF_OPT
+  depends on !PERF_OPT
+  depends on RV_PMP_CSR
+  bool "Enable PMP Check"
+  default y
+
+config RV_SVINVAL
+  bool "Enable VM Extension Svinval"
+  default y
+
+endmenu
