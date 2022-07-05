@@ -56,7 +56,7 @@ static word_t vaddr_mmu_read(struct Decode *s, vaddr_t addr, int len, int type) 
 #endif
 #ifdef CONFIG_SHARE
     if (unlikely(dynamic_config.debug_difftest)) {
-      fprintf(stderr, "[NEMU] mmu_read: vaddr 0x%lx, paddr 0x%lx, rdata 0x%lx\n",
+      fprintf(stderr, "[NEMU] mmu_read: vaddr 0x%x, paddr 0x%x, rdata 0x%x\n",
         vaddr, addr, rdata);
     }
 #endif
@@ -76,7 +76,7 @@ static void vaddr_mmu_write(struct Decode *s, vaddr_t addr, int len, word_t data
     addr = pg_base | (addr & PAGE_MASK);
 #ifdef CONFIG_SHARE
     if (unlikely(dynamic_config.debug_difftest)) {
-      fprintf(stderr, "[NEMU] mmu_write: vaddr 0x%lx, paddr 0x%lx, len %d, data 0x%lx\n",
+      fprintf(stderr, "[NEMU] mmu_write: vaddr 0x%x, paddr 0x%x, len %d, data 0x%x\n",
         vaddr, addr, len, data);
     }
 #endif
@@ -114,7 +114,7 @@ word_t vaddr_ifetch(vaddr_t addr, int len) {
 }
 
 word_t vaddr_read(struct Decode *s, vaddr_t addr, int len, int mmu_mode) {
-  Logm("Reading vaddr %lx", addr);
+  Logm("Reading vaddr %x", addr);
   return vaddr_read_internal(s, addr, len, MEM_TYPE_READ, mmu_mode);
 }
 
