@@ -8,7 +8,7 @@ word_t raise_intr(uint32_t NO, vaddr_t epc) {
 #define EX_ENTRY 0x80000180
   vaddr_t target = (NO & TLB_REFILL) ? 0x80000000 : EX_ENTRY;
   NO &= ~TLB_REFILL;
-  cpu.cause = NO << 2;
+  cpu.cause.val = NO << 2;
   cpu.epc = epc;
   cpu.status.exl = 1;
 
@@ -17,11 +17,13 @@ word_t raise_intr(uint32_t NO, vaddr_t epc) {
   return target;
 }
 
-void isa_query_intr() {
+word_t isa_query_intr() {
   if (cpu.INTR && (cpu.status.ie) && !(cpu.status.exl)) {
     cpu.INTR = false;
     cpu.pc = raise_intr(0, cpu.pc);
   }
+  // TODO: add interrupt no for mips
+  return INTR_EMPTY;
 }
 #else
 word_t raise_intr(uint32_t NO, vaddr_t epc) {

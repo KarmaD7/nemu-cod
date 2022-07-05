@@ -85,7 +85,7 @@ static inline def_DHelper(cmov) {
 }
 
 static inline def_DHelper(jal) {
-  decode_J(s);
+  decode_J(s, width);
   id_src2->imm = s->pc + 8;
 }
 

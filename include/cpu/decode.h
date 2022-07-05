@@ -95,7 +95,7 @@ typedef struct Decode {
 // empty decode helper
 static inline def_DHelper(empty) {}
 
-#define CASE_ENTRY(idx, id, tab) case idx: id(s); return tab(s);
+#define CASE_ENTRY(idx, id, tab) case idx: id(s, 0); return tab(s);
 #define IDTAB(idx, id, tab) CASE_ENTRY(idx, concat(decode_, id), concat(table_, tab))
 #define TAB(idx, tab) IDTAB(idx, empty, tab)
 #define EMPTY(idx) TAB(idx, inv)
