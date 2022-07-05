@@ -78,19 +78,21 @@ word_t paddr_read(paddr_t addr, int len, int type, int mode, vaddr_t vaddr) {
   assert(type == MEM_TYPE_READ || type == MEM_TYPE_IFETCH_READ || type == MEM_TYPE_IFETCH || type == MEM_TYPE_WRITE_READ);
   if (!isa_pmp_check_permission(addr, len, type, mode)) {
     Log("isa pmp check failed");
-    if (type == MEM_TYPE_IFETCH || type == MEM_TYPE_IFETCH_READ) {
-      INTR_TVAL_REG(EX_IAF) = vaddr;
-      longjmp_exception(EX_IAF);
-      return false;
-    } else if (cpu.amo || type == MEM_TYPE_WRITE_READ) {
-      INTR_TVAL_REG(EX_SAF) = vaddr;
-      longjmp_exception(EX_SAF);
-      return false;
-    } else {
-      INTR_TVAL_REG(EX_LAF) = vaddr;
-      longjmp_exception(EX_LAF);
-      return false;
-    }
+    // TODO for mips
+    return false;
+    // if (type == MEM_TYPE_IFETCH || type == MEM_TYPE_IFETCH_READ) {
+    //   INTR_TVAL_REG(EX_IAF) = vaddr;
+    //   longjmp_exception(EX_IAF);
+    //   return false;
+    // } else if (cpu.amo || type == MEM_TYPE_WRITE_READ) {
+    //   INTR_TVAL_REG(EX_SAF) = vaddr;
+    //   longjmp_exception(EX_SAF);
+    //   return false;
+    // } else {
+    //   INTR_TVAL_REG(EX_LAF) = vaddr;
+    //   longjmp_exception(EX_LAF);
+    //   return false;
+    // }
   }
 #ifndef CONFIG_SHARE
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
@@ -103,8 +105,9 @@ word_t paddr_read(paddr_t addr, int len, int type, int mode, vaddr_t vaddr) {
 #endif
     if(dynamic_config.ignore_illegal_mem_access)
       return 0;
-    printf("ERROR: invalid mem read from paddr " FMT_PADDR ", NEMU raise illegal inst exception\n", addr);
-    longjmp_exception(EX_II);
+    // todo for mips
+    // printf("ERROR: invalid mem read from paddr " FMT_PADDR ", NEMU raise illegal inst exception\n", addr);
+    // longjmp_exception(EX_II);
   }
   return 0;
 #endif
@@ -118,8 +121,9 @@ void paddr_write(paddr_t addr, int len, word_t data, int mode, vaddr_t vaddr) {
 #endif
 
   if (!isa_pmp_check_permission(addr, len, MEM_TYPE_WRITE, mode)) {
-    INTR_TVAL_REG(EX_SAF) = vaddr;
-    longjmp_exception(EX_SAF);
+    // TODO: check for mips
+    // INTR_TVAL_REG(EX_SAF) = vaddr;
+    // longjmp_exception(EX_SAF);
     return ;
   }
 #ifndef CONFIG_SHARE
@@ -130,8 +134,9 @@ void paddr_write(paddr_t addr, int len, word_t data, int mode, vaddr_t vaddr) {
   else {
     if(dynamic_config.ignore_illegal_mem_access)
       return;
-    printf("ERROR: invalid mem write to paddr " FMT_PADDR ", NEMU raise illegal inst exception\n", addr);
-    longjmp_exception(EX_II);
+    // todo for mips
+    // printf("ERROR: invalid mem write to paddr " FMT_PADDR ", NEMU raise illegal inst exception\n", addr);
+    // longjmp_exception(EX_II);
     return;
   }
 #endif

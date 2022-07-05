@@ -88,8 +88,9 @@ typedef struct {
   uint32_t entrylo0, entrylo1;
   uint32_t index;
 
+  uint32_t mode;
   bool INTR;
-
+  
   bool guided_exec;
   struct ExecutionGuide execution_guide;
 
@@ -138,5 +139,6 @@ typedef struct {
 #endif
 
 enum { MODE_U = 0, MODE_S };
+// this effects pmp check in riscv, but it is much simpler in mips.
 
 #endif
