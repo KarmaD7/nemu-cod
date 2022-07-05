@@ -137,4 +137,6 @@ typedef struct {
 #define isa_mmu_check(vaddr, len, type) ((vaddr & 0x80000000u) == 0 ? MMU_TRANSLATE : MMU_DIRECT)
 #endif
 
+enum { MODE_U = 0, MODE_S };
+
 #endif

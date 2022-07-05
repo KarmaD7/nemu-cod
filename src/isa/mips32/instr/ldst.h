@@ -3,7 +3,7 @@ def_EHelper(lw) {
 }
 
 def_EHelper(sw) {
-  rtl_sm(s, dsrc1, id_src2->imm, ddest, 4, MMU_DYNAMIC);
+  rtl_sm(s, dsrc1, ddest, id_src2->imm, 4, MMU_DYNAMIC);
 }
 #ifndef __ICS_EXPORT
 
@@ -24,11 +24,11 @@ def_EHelper(lbu) {
 }
 
 def_EHelper(sh) {
-  rtl_sm(s, dsrc1, id_src2->imm, ddest, 2, MMU_DYNAMIC);
+  rtl_sm(s, dsrc1, ddest, id_src2->imm, 2, MMU_DYNAMIC);
 }
 
 def_EHelper(sb) {
-  rtl_sm(s, dsrc1, id_src2->imm, ddest, 1, MMU_DYNAMIC);
+  rtl_sm(s, dsrc1, ddest, id_src2->imm, 1, MMU_DYNAMIC);
 }
 
 def_EHelper(swl) {
@@ -61,7 +61,7 @@ def_EHelper(swl) {
   // write back
   rtl_addi(s, s0, dsrc1, id_src2->imm);
   rtl_andi(s, s0, s0, ~0x3u);
-  rtl_sm(s, s0, 0, s1, 4, MMU_DYNAMIC);
+  rtl_sm(s, s0, s1, 0, 4, MMU_DYNAMIC);
 }
 
 def_EHelper(swr) {
@@ -96,7 +96,7 @@ def_EHelper(swr) {
   // write back
   rtl_addi(s, s0, dsrc1, id_src2->imm);
   rtl_andi(s, s0, s0, ~0x3u);
-  rtl_sm(s, s0, 0, s1, 4, MMU_DYNAMIC);
+  rtl_sm(s, s0, s1, 0, 4, MMU_DYNAMIC);
 }
 
 def_EHelper(lwl) {
