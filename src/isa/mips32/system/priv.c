@@ -12,7 +12,7 @@ static void csrrw(rtlreg_t *dest, const rtlreg_t *src, uint32_t csrid) {
       case 0:  *dest = cpu.index; break;
       case 10: *dest = cpu.entryhi.val; break;
       case 12: *dest = cpu.status.val; break;
-      case 13: *dest = cpu.cause;
+      case 13: *dest = cpu.cause.val;
                // qemu may set cause.IP[7]
                IFNDEF(CONFIG_DIFFTEST_REF_NEMU, difftest_skip_ref());
                break;
@@ -27,7 +27,7 @@ static void csrrw(rtlreg_t *dest, const rtlreg_t *src, uint32_t csrid) {
       case 3:  cpu.entrylo1    = *src; break;
       case 10: cpu.entryhi.val = *src & ~0x1f00; break;
       case 12: cpu.status.val  = *src; break;
-      case 13: cpu.cause       = *src; break;
+      case 13: cpu.cause.val   = *src; break;
       case 14: cpu.epc         = *src; break;
       default: panic("Writing to CSR = %d is not supported", csrid);
     }
@@ -47,7 +47,7 @@ static word_t priv_instr(uint32_t op, const rtlreg_t *src) {
   return 0;
 }
 
-void isa_hostcall(uint32_t id, rtlreg_t *dest, const rtlreg_t *src, uint32_t imm) {
+void isa_hostcall(uint32_t id, rtlreg_t *dest, const rtlreg_t *src, const rtlreg_t *src2, uint32_t imm) {
   word_t ret = 0;
   switch (id) {
     case HOSTCALL_CSR: csrrw(dest, src, imm); return;

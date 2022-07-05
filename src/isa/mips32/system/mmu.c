@@ -109,6 +109,18 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 #endif
 }
 
+#ifdef CONFIG_SHARE
+void isa_misalign_data_addr_check(vaddr_t vaddr, int len, int type) {
+  // TODO for mips
+  return;
+  // if (ISDEF(CONFIG_AC_SOFT) && unlikely((vaddr & (len - 1)) != 0)) {
+  //   int ex = cpu.amo || type == MEM_TYPE_WRITE ? EX_SAM : EX_LAM;
+  //   INTR_TVAL_REG(ex) = vaddr;
+  //   longjmp_exception(ex);
+  // }
+}
+#endif
+
 bool isa_pmp_check_permission(paddr_t paddr, int len, int type, int mode) {
   return true; // TODO: complete it
 }
