@@ -182,7 +182,7 @@ uint64_t per_bb_profile(Decode *s) {
     extern bool try_take_cpt(uint64_t icount);
     bool taken = try_take_cpt(abs_inst_count);
     if (taken) {
-      Log("Should take checkpoint on pc 0x%lx", s->pc);
+      Log("Should take checkpoint on pc 0x%x", s->pc);
     }
   }
   return abs_inst_count;
@@ -233,21 +233,21 @@ end_of_bb:
 
     // Here is per bb action
     uint64_t abs_inst_count = per_bb_profile(s);
-    Logtb("prev pc = 0x%lx, pc = 0x%lx", prev_s->pc, s->pc);
-    Logtb("Executed %ld instructions in total, pc: 0x%lx\n", (int64_t) abs_inst_count, prev_s->pc);
+    Logtb("prev pc = 0x%x, pc = 0x%x", prev_s->pc, s->pc);
+    Logtb("Executed %ld instructions in total, pc: 0x%x\n", (int64_t) abs_inst_count, prev_s->pc);
 
     if (unlikely(n <= 0)) break;
 
     // Here is per inst action
     // Because every instruction executed goes here, don't put Log here to improve performance
     def_finish();
-    Logti("prev pc = 0x%lx, pc = 0x%lx", prev_s->pc, s->pc);
+    Logti("prev pc = 0x%x, pc = 0x%x", prev_s->pc, s->pc);
     debug_difftest(this_s, s);
   }
 
 end_of_loop:
   // Here is per loop action and some priv instruction action
-  Loge("end_of_loop: prev pc = 0x%lx, pc = 0x%lx, total insts: %lu, remain: %lu",
+  Loge("end_of_loop: prev pc = 0x%x, pc = 0x%x, total insts: %lu, remain: %lu",
        prev_s->pc, s->pc, get_abs_instr_count(), n_remain_total);
   per_bb_profile(s);
 
@@ -308,6 +308,7 @@ static void update_global() {
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
+  printf("Entering cpu exec... \n");
   IFDEF(CONFIG_SHARE, assert(n <= 1));
   g_print_step = (n < MAX_INSTR_TO_PRINT);
   switch (nemu_state.state) {

@@ -41,6 +41,12 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   *success = false;
   return 0;
 }
+
+bool able_to_take_cpt() {
+  // TODO for mips
+  return true;
+}
+
 #else
 void isa_reg_display() {
 }

@@ -45,6 +45,7 @@ word_t paddr_read(paddr_t addr, int len, int type, int mode, vaddr_t vaddr);
 uint8_t* guest_to_host(paddr_t paddr);
 #include <debug.h>
 extern bool log_enable();
+extern unsigned long MEMORY_SIZE;
 }
 
 void Serializer::serializePMem(uint64_t inst_count) {
@@ -106,7 +107,7 @@ extern void csr_writeback();
 void Serializer::serializeRegs() {
   auto *intRegCpt = (uint64_t *) (get_pmem() + IntRegStartAddr);
   for (unsigned i = 0; i < 32; i++) {
-    *(intRegCpt + i) = cpu.gpr[i]._64;
+    *(intRegCpt + i) = cpu.gpr[i]._32;
   }
   Log("Writing int registers to checkpoint memory @[0x%x, 0x%x) [0x%x, 0x%x)",
       INT_REG_CPT_ADDR, INT_REG_CPT_ADDR + 32 * 8,
@@ -114,68 +115,68 @@ void Serializer::serializeRegs() {
       );
 
 
-  auto *floatRegCpt = (uint64_t *) (get_pmem() + FloatRegStartAddr);
-  for (unsigned i = 0; i < 32; i++) {
-    *(floatRegCpt + i) = cpu.fpr[i]._64;
-  }
-  Log("Writing float registers to checkpoint memory @[0x%x, 0x%x) [0x%x, 0x%x)",
-      FLOAT_REG_CPT_ADDR, FLOAT_REG_CPT_ADDR + 32 * 8,
-      FloatRegStartAddr, FloatRegStartAddr + 32 * 8
-      );
+  // auto *floatRegCpt = (uint64_t *) (get_pmem() + FloatRegStartAddr);
+  // for (unsigned i = 0; i < 32; i++) {
+  //   *(floatRegCpt + i) = cpu.fpr[i]._64;
+  // }
+  // Log("Writing float registers to checkpoint memory @[0x%x, 0x%x) [0x%x, 0x%x)",
+  //     FLOAT_REG_CPT_ADDR, FLOAT_REG_CPT_ADDR + 32 * 8,
+  //     FloatRegStartAddr, FloatRegStartAddr + 32 * 8
+  //     );
 
 
   auto *pc = (uint64_t *) (get_pmem() + PCAddr);
   *pc = cpu.pc;
-  Log("Writing PC: 0x%lx at addr 0x%x", cpu.pc, PC_CPT_ADDR);
+  Log("Writing PC: 0x%x at addr 0x%x", cpu.pc, PC_CPT_ADDR);
 
-
+  // TODO for mips
 //  csr_writeback();
-  auto *csrCpt = (uint64_t *) (get_pmem() + CSRStartAddr);
-//  Log("csrCpt: %p\n",csrCpt);
-//  Log("Mstatus: 0x%x", mstatus->val);
-//  Log("CSR array mstatus: 0x%x", csr_array[0x300]);
-  for (unsigned i = 0; i < 4096; i++) {
-    rtlreg_t val = csr_array[i];
+//   auto *csrCpt = (uint64_t *) (get_pmem() + CSRStartAddr);
+// //  Log("csrCpt: %p\n",csrCpt);
+// //  Log("Mstatus: 0x%x", mstatus->val);
+// //  Log("CSR array mstatus: 0x%x", csr_array[0x300]);
+//   for (unsigned i = 0; i < 4096; i++) {
+//     rtlreg_t val = csr_array[i];
 
-    if ((void *)mip == (void *)&csr_array[i]) {
-      mip_t mip_tmp = *mip;
-      if (mip_tmp.mtip) {
-        mip_tmp.mtip = 0;
-      }
-//      Log("Saving mip: 0x%x", mip_tmp.val);
-      val = mip_tmp.val;
-    }
+//     if ((void *)mip == (void *)&csr_array[i]) {
+//       mip_t mip_tmp = *mip;
+//       if (mip_tmp.mtip) {
+//         mip_tmp.mtip = 0;
+//       }
+// //      Log("Saving mip: 0x%x", mip_tmp.val);
+//       val = mip_tmp.val;
+//     }
 
-    *(csrCpt + i) = val;
+//     *(csrCpt + i) = val;
 
-    if (csr_array[i] != 0) {
-      Log("CSR 0x%x: 0x%lx", i, *(csrCpt + i));
-    }
-  }
-  Log("Writing CSR to checkpoint memory @[0x%x, 0x%x) [0x%x, 0x%x)",
-      CSR_CPT_ADDR, CSR_CPT_ADDR + 4096 * 8,
-      CSRStartAddr, CSRStartAddr + 4096 * 8
-      );
+//     if (csr_array[i] != 0) {
+//       Log("CSR 0x%x: 0x%lx", i, *(csrCpt + i));
+//     }
+//   }
+//   Log("Writing CSR to checkpoint memory @[0x%x, 0x%x) [0x%x, 0x%x)",
+//       CSR_CPT_ADDR, CSR_CPT_ADDR + 4096 * 8,
+//       CSRStartAddr, CSRStartAddr + 4096 * 8
+//       );
 
 
-  auto *flag = (uint64_t *) (get_pmem() + CptFlagAddr);
-  *flag = CPT_MAGIC_BUMBER;
-  Log("Touching Flag: 0x%x at addr 0x%x", CPT_MAGIC_BUMBER, BOOT_FLAGS);
+//   auto *flag = (uint64_t *) (get_pmem() + CptFlagAddr);
+//   *flag = CPT_MAGIC_BUMBER;
+//   Log("Touching Flag: 0x%x at addr 0x%x", CPT_MAGIC_BUMBER, BOOT_FLAGS);
 
-  auto *mode_flag = (uint64_t *) (get_pmem() + CptFlagAddr + 8);
-  *mode_flag = cpu.mode;
-  Log("Record mode flag: 0x%lx at addr 0x%x", cpu.mode, BOOT_FLAGS+8);
+//   auto *mode_flag = (uint64_t *) (get_pmem() + CptFlagAddr + 8);
+//   *mode_flag = cpu.mode;
+//   Log("Record mode flag: 0x%lx at addr 0x%x", cpu.mode, BOOT_FLAGS+8);
 
-  auto *mtime = (uint64_t *) (get_pmem() + CptFlagAddr + 16);
-  extern word_t paddr_read(paddr_t addr, int len, int type, int mode, vaddr_t vaddr);
-  *mtime = ::paddr_read(CLINT_MMIO+0xBFF8, 8, MEM_TYPE_READ, MODE_M, CLINT_MMIO+0xBFF8);
-  Log("Record time: 0x%lx at addr 0x%x", cpu.mode, BOOT_FLAGS+16);
+//   auto *mtime = (uint64_t *) (get_pmem() + CptFlagAddr + 16);
+//   extern word_t paddr_read(paddr_t addr, int len, int type, int mode, vaddr_t vaddr);
+//   *mtime = ::paddr_read(CLINT_MMIO+0xBFF8, 8, MEM_TYPE_READ, MODE_M, CLINT_MMIO+0xBFF8);
+//   Log("Record time: 0x%lx at addr 0x%x", cpu.mode, BOOT_FLAGS+16);
 
-  auto *mtime_cmp = (uint64_t *) (get_pmem() + CptFlagAddr + 24);
-  *mtime_cmp = ::paddr_read(CLINT_MMIO+0x4000, 8, MEM_TYPE_READ, MODE_M, CLINT_MMIO+0x4000);
-  Log("Record time: 0x%lx at addr 0x%x", cpu.mode, BOOT_FLAGS+24);
+//   auto *mtime_cmp = (uint64_t *) (get_pmem() + CptFlagAddr + 24);
+//   *mtime_cmp = ::paddr_read(CLINT_MMIO+0x4000, 8, MEM_TYPE_READ, MODE_M, CLINT_MMIO+0x4000);
+//   Log("Record time: 0x%lx at addr 0x%x", cpu.mode, BOOT_FLAGS+24);
 
-  regDumped = true;
+//   regDumped = true;
 }
 
 void Serializer::serialize(uint64_t inst_count) {

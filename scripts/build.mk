@@ -24,8 +24,8 @@ CC := $(CCACHE) $(CC)
 LD := $(CCACHE) $(CC)
 INCLUDES = $(addprefix -I, $(INC_DIR))
 XINCLUDES = $(addprefix -I, $(XINC_DIR))
-CFLAGS  := -O2 -MMD -Wall -Werror $(INCLUDES) $(CFLAGS)
-CXXFLAGS  := -O2 -MMD -Wall -Werror --std=c++17 $(XINCLUDES) $(CFLAGS)
+CFLAGS  := -O2 -MMD -Werror $(INCLUDES) $(CFLAGS)
+CXXFLAGS  := -O2 -MMD -Werror --std=c++17 $(XINCLUDES) $(CFLAGS)
 LDFLAGS := -O2 $(LDFLAGS)
 # filesystem
 ifndef SHARE
