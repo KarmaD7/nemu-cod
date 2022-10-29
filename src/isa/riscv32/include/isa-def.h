@@ -3,6 +3,36 @@
 
 #include <common.h>
 
+struct ExecutionGuide {
+  // force raise exception
+  bool force_raise_exception;
+  uint64_t exception_num;
+  uint64_t mtval;
+  uint64_t stval;
+  // force set jump target
+  bool force_set_jump_target;
+  uint64_t jump_target;
+};
+
+struct DebugInfo {
+  uint64_t current_pc;
+};
+
+#ifdef CONFIG_QUERY_REF
+typedef enum RefQueryType {
+  REF_QUERY_MEM_EVENT
+} RefQueryType;
+
+struct MemEventQueryResult {
+  uint64_t pc;
+  bool mem_access;
+  bool mem_access_is_load;
+  // uint64_t mem_access_paddr;
+  uint64_t mem_access_vaddr;
+  // uint64_t mem_access_result;
+};
+#endif
+
 typedef struct {
   struct {
     rtlreg_t _32;
@@ -10,31 +40,12 @@ typedef struct {
 
   vaddr_t pc;
 #ifndef __ICS_EXPORT
-  vaddr_t stvec;
-  vaddr_t scause;
-  vaddr_t sepc;
-  vaddr_t sscratch;
-  union {
-    struct {
-      uint32_t uie : 1;
-      uint32_t sie : 1;
-      uint32_t pad0: 2;
-      uint32_t upie: 1;
-      uint32_t spie: 1;
-      uint32_t pad1: 2;
-      uint32_t spp : 1;
-      uint32_t dontcare :21;
-    };
-    uint32_t val;
-  } sstatus;
-  union {
-    struct {
-      uint32_t ppn :22;
-      uint32_t asid: 9;
-      uint32_t mode: 1;
-    };
-    uint32_t val;
-  } satp;
+  uint32_t pc;
+  uint32_t mstatus, mcause, mepc;
+  uint32_t sstatus, scause, sepc;
+
+  uint32_t satp, mip, mie, mscratch, sscratch, mideleg, medeleg;
+  uint32_t mtval, stval, mtvec, stvec;
   uint32_t mode;
   bool INTR;
 #endif
