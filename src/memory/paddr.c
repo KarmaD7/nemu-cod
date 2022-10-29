@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <cpu/cpu.h>
-#include "../local-include/csr.h"
-#include "../local-include/intr.h"
+// #include "../local-include/csr.h"
+// #include "../local-include/intr.h"
 
 unsigned long MEMORY_SIZE = CONFIG_MSIZE;
 

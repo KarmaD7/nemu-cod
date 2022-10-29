@@ -271,7 +271,7 @@ static int execute(int n) {
   prev_s = &s;
   for (;n > 0; n --) {
     fetch_decode(&s, cpu.pc);
-    cpu.debug.current_pc = s.pc;
+    // cpu.debug.current_pc = s.pc;
     cpu.pc = s.snpc;
 #ifdef CONFIG_SHARE
     if (unlikely(dynamic_config.debug_difftest)) {

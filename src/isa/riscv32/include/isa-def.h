@@ -35,7 +35,7 @@ typedef struct {
     };
     uint32_t val;
   } satp;
-
+  uint32_t mode;
   bool INTR;
 #endif
 } riscv32_CPU_state;
@@ -105,6 +105,7 @@ typedef struct {
   } instr;
 } riscv32_ISADecodeInfo;
 
+enum { MODE_U = 0, MODE_S, MODE_H, MODE_M };
 #ifdef __ICS_EXPORT
 #define isa_mmu_state() (MMU_DIRECT)
 #else
