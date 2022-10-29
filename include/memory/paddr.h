@@ -16,9 +16,9 @@ extern unsigned long MEMORY_SIZE;
 void init_mem();
 
 #ifdef CONFIG_SHARE
-#define PADDRBITS 36
+#define PADDRBITS 32
 #else
-#define PADDRBITS 40
+#define PADDRBITS 34
 #endif
 
 /* convert the guest physical address in the guest program to host virtual address in NEMU */

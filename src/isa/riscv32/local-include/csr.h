@@ -38,7 +38,7 @@
   f(sie        , 0x104) f(stvec      , 0x105) f(scounteren , 0x106) \
   f(sscratch   , 0x140) f(sepc       , 0x141) f(scause     , 0x142) \
   f(stval      , 0x143) f(sip        , 0x144) \
-  f(satp       , 0x180) \
+  f(satp       , 0x180)
 #endif
 
 #define CSR_STRUCT_START(name) \
@@ -51,38 +51,33 @@
   } concat(name, _t);
 
 CSR_STRUCT_START(mstatus)
-  uint64_t uie : 1;
-  uint64_t sie : 1;
-  uint64_t pad0: 1;
-  uint64_t mie : 1;
-  uint64_t upie: 1;
-  uint64_t spie: 1;
-  uint64_t pad1: 1;
-  uint64_t mpie: 1;
-  uint64_t spp : 1;
-  uint64_t vs: 2;
-  uint64_t mpp : 2;
-  uint64_t fs  : 2;
-  uint64_t xs  : 2;
-  uint64_t mprv: 1;
-  uint64_t sum : 1;
-  uint64_t mxr : 1;
-  uint64_t tvm : 1;
-  uint64_t tw  : 1;
-  uint64_t tsr : 1;
-  uint64_t pad3: 9;
-  uint64_t uxl : 2;
-  uint64_t sxl : 2;
-  uint64_t sbe : 1;
-  uint64_t mbe : 1;
-  uint64_t pad4:25;
-  uint64_t sd  : 1;
+  uint32_t uie : 1;
+  uint32_t sie : 1;
+  uint32_t pad0: 1;
+  uint32_t mie : 1;
+  uint32_t upie: 1;
+  uint32_t spie: 1;
+  uint32_t pad1: 1;
+  uint32_t mpie: 1;
+  uint32_t spp : 1;
+  uint32_t vs:   2;
+  uint32_t mpp : 2;
+  uint32_t fs  : 2;
+  uint32_t xs  : 2;
+  uint32_t mprv: 1;
+  uint32_t sum : 1;
+  uint32_t mxr : 1;
+  uint32_t tvm : 1;
+  uint32_t tw  : 1;
+  uint32_t tsr : 1;
+  uint32_t pad3: 8;
+  uint32_t sd  : 1;
 CSR_STRUCT_END(mstatus)
 
 CSR_STRUCT_START(misa)
-  uint64_t extensions: 26;
-  uint64_t pad       : 36;
-  uint64_t mxl       :  2;
+  uint32_t extensions: 26;
+  uint32_t pad       :  4;
+  uint32_t mxl       :  2;
 CSR_STRUCT_END(misa)
 
 CSR_STRUCT_START(mtvec)
@@ -92,8 +87,8 @@ CSR_STRUCT_START(mcounteren)
 CSR_STRUCT_END(mcounteren)
 
 CSR_STRUCT_START(mcause)
-  uint64_t code:63;
-  uint64_t intr: 1;
+  uint32_t code:31;
+  uint32_t intr: 1;
 CSR_STRUCT_END(mcause)
 
 CSR_STRUCT_START(mepc)
@@ -115,33 +110,33 @@ CSR_STRUCT_START(mtval)
 CSR_STRUCT_END(mtval)
 
 CSR_STRUCT_START(mie)
-  uint64_t usie : 1;
-  uint64_t ssie : 1;
-  uint64_t hsie : 1;
-  uint64_t msie : 1;
-  uint64_t utie : 1;
-  uint64_t stie : 1;
-  uint64_t htie : 1;
-  uint64_t mtie : 1;
-  uint64_t ueie : 1;
-  uint64_t seie : 1;
-  uint64_t heie : 1;
-  uint64_t meie : 1;
+  uint32_t usie : 1;
+  uint32_t ssie : 1;
+  uint32_t hsie : 1;
+  uint32_t msie : 1;
+  uint32_t utie : 1;
+  uint32_t stie : 1;
+  uint32_t htie : 1;
+  uint32_t mtie : 1;
+  uint32_t ueie : 1;
+  uint32_t seie : 1;
+  uint32_t heie : 1;
+  uint32_t meie : 1;
 CSR_STRUCT_END(mie)
 
 CSR_STRUCT_START(mip)
-  uint64_t usip : 1;
-  uint64_t ssip : 1;
-  uint64_t hsip : 1;
-  uint64_t msip : 1;
-  uint64_t utip : 1;
-  uint64_t stip : 1;
-  uint64_t htip : 1;
-  uint64_t mtip : 1;
-  uint64_t ueip : 1;
-  uint64_t seip : 1;
-  uint64_t heip : 1;
-  uint64_t meip : 1;
+  uint32_t usip : 1;
+  uint32_t ssip : 1;
+  uint32_t hsip : 1;
+  uint32_t msip : 1;
+  uint32_t utip : 1;
+  uint32_t stip : 1;
+  uint32_t htip : 1;
+  uint32_t mtip : 1;
+  uint32_t ueip : 1;
+  uint32_t seip : 1;
+  uint32_t heip : 1;
+  uint32_t meip : 1;
 CSR_STRUCT_END(mip)
 
 /** pmp */
@@ -241,14 +236,14 @@ CSR_STRUCT_START(pmpaddr15)
 CSR_STRUCT_END(pmpaddr15)
 
 CSR_STRUCT_START(sstatus)
-  uint64_t uie : 1;
-  uint64_t sie : 1;
-  uint64_t pad0: 2;
-  uint64_t upie: 1;
-  uint64_t spie: 1;
-  uint64_t pad1: 2;
-  uint64_t spp : 1;
-  uint64_t pad2: 4;
+  uint32_t uie : 1;
+  uint32_t sie : 1;
+  uint32_t pad0: 2;
+  uint32_t upie: 1;
+  uint32_t spie: 1;
+  uint32_t pad1: 2;
+  uint32_t spp : 1;
+  uint32_t pad2: 4;
 CSR_STRUCT_END(sstatus)
 
 CSR_STRUCT_START(stvec)
@@ -258,33 +253,33 @@ CSR_STRUCT_START(scounteren)
 CSR_STRUCT_END(scounteren)
 
 CSR_STRUCT_START(sie)
-  uint64_t usie : 1;
-  uint64_t ssie : 1;
-  uint64_t pad0 : 2;
-  uint64_t utie : 1;
-  uint64_t stie : 1;
-  uint64_t pad1 : 2;
-  uint64_t ueie : 1;
-  uint64_t seie : 1;
-  uint64_t pad2 : 2;
+  uint32_t usie : 1;
+  uint32_t ssie : 1;
+  uint32_t pad0 : 2;
+  uint32_t utie : 1;
+  uint32_t stie : 1;
+  uint32_t pad1 : 2;
+  uint32_t ueie : 1;
+  uint32_t seie : 1;
+  uint32_t pad2 : 2;
 CSR_STRUCT_END(sie)
 
 CSR_STRUCT_START(sip)
-  uint64_t usip : 1;
-  uint64_t ssip : 1;
-  uint64_t pad0 : 2;
-  uint64_t utip : 1;
-  uint64_t stip : 1;
-  uint64_t pad1 : 2;
-  uint64_t ueip : 1;
-  uint64_t seip : 1;
-  uint64_t pad2 : 2;
+  uint32_t usip : 1;
+  uint32_t ssip : 1;
+  uint32_t pad0 : 2;
+  uint32_t utip : 1;
+  uint32_t stip : 1;
+  uint32_t pad1 : 2;
+  uint32_t ueip : 1;
+  uint32_t seip : 1;
+  uint32_t pad2 : 2;
 CSR_STRUCT_END(sip)
 
-#define SATP_ASID_LEN 16 // max is 16
+#define SATP_ASID_LEN 9 // max is 16
 #define SATP_PADDR_LEN (PADDRBITS-12) // max is 44
-#define SATP_ASID_MAX_LEN 16
-#define SATP_PADDR_MAX_LEN 44
+#define SATP_ASID_MAX_LEN 9
+#define SATP_PADDR_MAX_LEN 34
 
 #define SATP_MODE_MASK (8UL << (SATP_ASID_MAX_LEN + SATP_PADDR_MAX_LEN))
 #define SATP_ASID_MASK (((1L << SATP_ASID_LEN)-1) << SATP_PADDR_MAX_LEN)
@@ -294,14 +289,14 @@ CSR_STRUCT_END(sip)
 #define MASKED_SATP(x) (SATP_MASK & x)
 
 CSR_STRUCT_START(satp)
-  uint64_t ppn :44;
-  uint64_t asid:16;
-  uint64_t mode: 4;
+  uint32_t ppn :22;
+  uint32_t asid: 9;
+  uint32_t mode: 1;
 CSR_STRUCT_END(satp)
 
 CSR_STRUCT_START(scause)
-  uint64_t code:63;
-  uint64_t intr: 1;
+  uint32_t code:31;
+  uint32_t intr: 1;
 CSR_STRUCT_END(scause)
 
 CSR_STRUCT_START(sepc)
