@@ -37,6 +37,22 @@ typedef struct {
 static TLBEntry TLB[4096] = {};
 static bool TLBValid[4096] = {};
 
+// static int ifetch_mmu_state = MMU_DIRECT;
+// static int data_mmu_state = MMU_DIRECT;
+
+// int get_data_mmu_state() {
+//   return (data_mmu_state == MMU_DIRECT ? MMU_DIRECT : MMU_TRANSLATE);
+// }
+
+// static inline int update_mmu_state_internal(bool ifetch) {
+//   uint32_t mode = (mstatus->mprv && (!ifetch) ? mstatus->mpp : cpu.mode);
+//   if (mode < MODE_M) {
+//     assert(satp->mode == 0 || satp->mode == 8);
+//     if (satp->mode == 8) return MMU_TRANSLATE;
+//   }
+//   return MMU_DIRECT;
+// }
+
 static inline int TLB_hash(uint32_t vpn) {
   return vpn % ARRLEN(TLB);
 }
@@ -90,5 +106,5 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 #endif
 
 bool isa_pmp_check_permission(paddr_t addr, int len, int type, int mode) {
-  return true; // TODO: complete it
+  return true; // don't need pmp
 }

@@ -49,7 +49,7 @@ word_t raise_intr(word_t NO, vaddr_t epc) {
       default: stval->val = 0;
     }
     cpu.mode = MODE_S;
-    update_mmu_state();
+    // update_mmu_state();
     return get_trap_pc(stvec->val, scause->val);
     // return stvec->val;
   } else {
@@ -66,7 +66,7 @@ word_t raise_intr(word_t NO, vaddr_t epc) {
       default: mtval->val = 0;
     }
     cpu.mode = MODE_M;
-    update_mmu_state();
+    // update_mmu_state();
     return get_trap_pc(mtvec->val, mcause->val);
     // return mtvec->val;
   }
