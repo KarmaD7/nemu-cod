@@ -38,6 +38,10 @@ if ISA_x86
 source "src/isa/x86/Kconfig"
 endif
 
+if ISA_riscv32
+source "src/isa/riscv32/Kconfig"
+endif
+
 if ISA_riscv64
 source "src/isa/riscv64/Kconfig"
 endif

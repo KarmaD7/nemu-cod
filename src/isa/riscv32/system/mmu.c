@@ -1,6 +1,7 @@
 #include <isa.h>
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
+#include "../local-include/csr.h"
 
 #ifndef __ICS_EXPORT
 /* the 32bit Page Table Entry(second level page table) data structure */
@@ -67,7 +68,7 @@ static paddr_t ptw(vaddr_t vaddr, int type) {
   //}
 
   PageAddr *addr = (void *)&vaddr;
-  paddr_t pdir_base = cpu.satp.ppn << 12;
+  paddr_t pdir_base = satp->ppn << 12;
 
   PTE pde;
   pde.val	= paddr_read(pdir_base + addr->pdir_idx * 4, 4, MEM_TYPE_READ, MODE_S, vaddr);

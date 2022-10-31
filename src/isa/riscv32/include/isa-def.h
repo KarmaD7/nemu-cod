@@ -2,6 +2,7 @@
 #define __ISA_RISCV32_H__
 
 #include <common.h>
+#include "../local-include/csr.h"
 
 struct ExecutionGuide {
   // force raise exception
@@ -38,7 +39,6 @@ typedef struct {
     rtlreg_t _32;
   } gpr[32];
 
-  vaddr_t pc;
 #ifndef __ICS_EXPORT
   uint32_t pc;
   uint32_t mstatus, mcause, mepc;
@@ -120,7 +120,7 @@ enum { MODE_U = 0, MODE_S, MODE_H, MODE_M };
 #ifdef __ICS_EXPORT
 #define isa_mmu_state() (MMU_DIRECT)
 #else
-#define isa_mmu_state() (cpu.satp.mode ? MMU_TRANSLATE : MMU_DIRECT)
+#define isa_mmu_state() (satp->mode ? MMU_TRANSLATE : MMU_DIRECT)
 #endif
 #define isa_mmu_check(vaddr, len, type) isa_mmu_state()
 

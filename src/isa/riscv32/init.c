@@ -1,5 +1,6 @@
 #include <isa.h>
 #include <memory/paddr.h>
+#include "../local-include/csr.h"
 
 // this is not consistent with uint8_t
 // but it is ok since we do not access the array directly
@@ -17,7 +18,7 @@ static void restart() {
   /* The zero register is always 0. */
   cpu.gpr[0]._32 = 0;
 #ifndef __ICS_EXPORT
-  cpu.sstatus.val = 0x000c0100;
+  sstatus->val = 0x000c0100;
 #endif
 }
 
