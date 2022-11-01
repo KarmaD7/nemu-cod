@@ -18,6 +18,40 @@ def_EHelper(csrrs) {
   rtl_priv_next(s);
 }
 
+def_EHelper(csrrc) {
+  csr_difftest();
+  rtl_hostcall(s, HOSTCALL_CSR, s0, NULL, NULL, id_src2->imm);
+  rtl_not(s, s1, dsrc1);
+  rtl_and(s, s1, s0, s1);
+  rtl_mv(s, ddest, s0);
+  rtl_hostcall(s, HOSTCALL_CSR, NULL, s1, NULL, id_src2->imm);
+  rtl_priv_next(s);
+}
+
+def_EHelper(csrrwi) {
+  csr_difftest();
+  rtl_hostcall(s, HOSTCALL_CSR, ddest, dsrc1, NULL, id_src2->imm);
+  rtl_priv_next(s);
+}
+
+def_EHelper(csrrsi) {
+  csr_difftest();
+  rtl_hostcall(s, HOSTCALL_CSR, s0, NULL, NULL, id_src2->imm);
+  rtl_or(s, s1, s0, dsrc1);
+  rtl_mv(s, ddest, s0);
+  rtl_hostcall(s, HOSTCALL_CSR, NULL, s1, NULL, id_src2->imm);
+  rtl_priv_next(s);
+}
+
+def_EHelper(csrrci) {
+  csr_difftest();
+  rtl_hostcall(s, HOSTCALL_CSR, s0, NULL, NULL, id_src2->imm);
+  rtl_or(s, s1, s0, dsrc1);
+  rtl_mv(s, ddest, s0);
+  rtl_hostcall(s, HOSTCALL_CSR, NULL, s1, NULL, id_src2->imm);
+  rtl_priv_next(s);
+}
+
 def_EHelper(ecall) {
   priv_difftest();
   rtl_trap(s, s->pc, 9);

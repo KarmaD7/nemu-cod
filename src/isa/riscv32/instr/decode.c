@@ -213,7 +213,7 @@ def_THelper(priv) {
 
 def_THelper(system) {
   switch (s->isa.instr.i.funct3) {
-    TAB(0, priv)  TAB (1, csrrw)  TAB (2, csrrs)
+    TAB(0, priv)  TAB (1, csrrw)  TAB (2, csrrs) TAB(3, csrrc)
   }
   return EXEC_ID_inv;
 };
