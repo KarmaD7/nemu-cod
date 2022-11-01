@@ -120,7 +120,7 @@ enum { MODE_U = 0, MODE_S, MODE_H, MODE_M };
 #ifdef __ICS_EXPORT
 #define isa_mmu_state() (MMU_DIRECT)
 #else
-#define isa_mmu_state() (satp->mode ? MMU_TRANSLATE : MMU_DIRECT)
+#define isa_mmu_state() (satp->mode && cpu.mode < MODE_M ? MMU_TRANSLATE : MMU_DIRECT)
 #endif
 #define isa_mmu_check(vaddr, len, type) isa_mmu_state()
 
