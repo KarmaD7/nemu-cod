@@ -21,7 +21,7 @@
   f(sscratch   , 0x140) f(sepc       , 0x141) f(scause     , 0x142) \
   f(stval      , 0x143) f(sip        , 0x144) \
   f(satp       , 0x180) \
-  f(mtime      , 0xc01)
+  f(mtime      , 0xc01) f(mtimeh     , 0xc81)
 #else
 #define CSRS(f) \
   f(mstatus    , 0x300) f(misa       , 0x301) f(medeleg    , 0x302) f(mideleg    , 0x303) \
@@ -310,6 +310,9 @@ CSR_STRUCT_END(sscratch)
 
 CSR_STRUCT_START(mtime)
 CSR_STRUCT_END(mtime)
+
+CSR_STRUCT_START(mtimeh)
+CSR_STRUCT_END(mtimeh)
 
 #define CSRS_DECL(name, addr) extern concat(name, _t)* const name;
 MAP(CSRS, CSRS_DECL)
