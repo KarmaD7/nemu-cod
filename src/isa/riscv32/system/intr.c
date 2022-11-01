@@ -4,7 +4,7 @@
 
 void update_mmu_state();
 
-#define INTR_BIT (1ULL << 63)
+#define INTR_BIT (1U << 31)
 enum {
   IRQ_USIP, IRQ_SSIP, IRQ_HSIP, IRQ_MSIP,
   IRQ_UTIP, IRQ_STIP, IRQ_HTIP, IRQ_MTIP,
@@ -17,8 +17,7 @@ bool intr_deleg_S(word_t exceptionNO) {
   return delegS;
 }
 
-static word_t get_trap_pc(word_t xtvec, word_t xcause) {
-  printf("getting trap pc, cause %d\n", xcause);
+static word_t get_trap_pc(word_t xtvec, word_t xcause) {\
   word_t base = (xtvec >> 2) << 2;
   word_t mode = (xtvec & 0x1); // bit 1 is reserved, dont care here.
   bool is_intr = (xcause >> (sizeof(word_t)-1)) == 1;
@@ -33,6 +32,9 @@ word_t raise_intr(word_t NO, vaddr_t epc) {
     case EX_LPF:
     case EX_SPF: difftest_skip_dut(1, 2); break;
   }
+
+  if (NO == EX_SAF)
+    printf("getting trap pc, no %x\n", NO);
 
   bool delegS = intr_deleg_S(NO);
 

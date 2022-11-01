@@ -2,7 +2,7 @@
 #include <rtl/rtl.h>
 
 #define INSTR_NULLARY(f) \
-  f(inv) f(nemu_trap) f(ecall) f(sret) f(sfence_vma) f(p_ret)
+  f(inv) f(nemu_trap) f(ecall) f(sret) f(mret) f(sfence_vma) f(p_ret)
 
 #define INSTR_UNARY(f) \
   f(p_li_0) f(p_li_1) \
@@ -20,7 +20,7 @@
   f(addi) f(slli) f(srli) f(slti) f(sltui) f(xori) f(ori) f(srai) f(andi) \
   f(jalr) f(beq) f(bne) f(blt) f(bge) f(bltu) f(bgeu) \
   f(mul) f(mulh) f(mulhu) f(mulhsu) f(div) f(divu) f(rem) f(remu) \
-  f(csrrw) f(csrrs) \
+  f(csrrw) f(csrrs) f(csrrc) f(csrrwi) f(csrrsi) f(csrrci)\
   f(c_li) f(c_addi) f(c_slli) f(c_srli) f(c_srai) f(c_andi) \
   f(c_add) f(c_and) f(c_or) f(c_xor) f(c_sub) \
   f(p_blez) f(p_bgez) f(p_bltz) f(p_bgtz)

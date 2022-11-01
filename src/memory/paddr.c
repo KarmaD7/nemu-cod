@@ -77,8 +77,7 @@ word_t paddr_read(paddr_t addr, int len, int type, int mode, vaddr_t vaddr) {
 
   assert(type == MEM_TYPE_READ || type == MEM_TYPE_IFETCH_READ || type == MEM_TYPE_IFETCH || type == MEM_TYPE_WRITE_READ);
   if (!isa_pmp_check_permission(addr, len, type, mode)) {
-    Log("isa pmp check failed");
-    // TODO for mips
+    printf("isa pmp check failed\n");
     return false;
     // if (type == MEM_TYPE_IFETCH || type == MEM_TYPE_IFETCH_READ) {
     //   INTR_TVAL_REG(EX_IAF) = vaddr;

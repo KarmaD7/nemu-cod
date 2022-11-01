@@ -206,7 +206,7 @@ def_THelper(branch) {
 
 def_THelper(priv) {
   switch (s->isa.instr.csr.csr) {
-    TAB(0, ecall)  TAB (0x102, sret)  TAB (0x120, sfence_vma)
+    TAB(0, ecall)  TAB (0x102, sret)  TAB (0x120, sfence_vma)  TAB(0x302, mret)
   }
   return EXEC_ID_inv;
 };

@@ -30,6 +30,12 @@ def_EHelper(sret) {
   rtl_priv_jr(s, s0);
 }
 
+def_EHelper(mret) {
+  priv_difftest();
+  rtl_hostcall(s, HOSTCALL_PRIV, s0, NULL, NULL, 0x302);
+  rtl_priv_jr(s, s0);
+}
+
 def_EHelper(sfence_vma) {
   priv_difftest();
   rtl_hostcall(s, HOSTCALL_PRIV, NULL, NULL, NULL, 0x120);
