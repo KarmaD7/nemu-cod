@@ -258,7 +258,8 @@ static void csrrw(rtlreg_t *dest, const rtlreg_t *src, uint32_t csrid) {
   if (!csr_is_legal(csrid)) {
     Logti("Illegal csr id %u", csrid);
     Log("Illegal csr id %u", csrid);
-    longjmp_exception(EX_II);
+    panic("haha");
+    // longjmp_exception(EX_II);
     return;
   }
   word_t *csr = csr_decode(csrid);
@@ -291,7 +292,7 @@ static word_t priv_instr(uint32_t op, const rtlreg_t *src) {
       return mepc->val;
       break;
     case 0x120: // sfence.vma
-      printf("src %p\n", src);
+      // printf("src %p\n", src);
       mmu_tlb_flush(*src);
       break;
 #ifdef CONFIG_RV_SVINVAL
