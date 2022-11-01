@@ -234,6 +234,7 @@ static inline void csr_write(word_t *dest, word_t src) {
     mmu_tlb_flush(0);
 #endif
   } else if (is_write(satp)) {
+    printf("satp %x\n", MASKED_SATP(src));
     *dest = MASKED_SATP(src);
   } else { *dest = src; }
 
@@ -290,6 +291,7 @@ static word_t priv_instr(uint32_t op, const rtlreg_t *src) {
       return mepc->val;
       break;
     case 0x120: // sfence.vma
+      printf("src %p\n", src);
       mmu_tlb_flush(*src);
       break;
 #ifdef CONFIG_RV_SVINVAL
