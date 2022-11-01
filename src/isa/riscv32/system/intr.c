@@ -18,6 +18,7 @@ bool intr_deleg_S(word_t exceptionNO) {
 }
 
 static word_t get_trap_pc(word_t xtvec, word_t xcause) {
+  printf("getting trap pc, cause %d\n", xcause);
   word_t base = (xtvec >> 2) << 2;
   word_t mode = (xtvec & 0x1); // bit 1 is reserved, dont care here.
   bool is_intr = (xcause >> (sizeof(word_t)-1)) == 1;

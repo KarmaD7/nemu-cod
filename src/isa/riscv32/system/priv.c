@@ -114,7 +114,7 @@ static inline word_t csr_read(word_t *src) {
 
   if (is_read_pmpaddr) {
 #ifndef CONFIG_RV_PMP_CSR
-    longjmp_exception(EX_II);
+    // longjmp_exception(EX_II);
     return 0;
 #else
     // If n_pmp is zero, that means pmp is not implemented hence raise trap if it tries to access the csr
@@ -256,6 +256,7 @@ word_t csrid_read(uint32_t csrid) {
 static void csrrw(rtlreg_t *dest, const rtlreg_t *src, uint32_t csrid) {
   if (!csr_is_legal(csrid)) {
     Logti("Illegal csr id %u", csrid);
+    Log("Illegal csr id %u", csrid);
     longjmp_exception(EX_II);
     return;
   }
