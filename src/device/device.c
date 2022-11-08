@@ -7,15 +7,6 @@ void init_serial();
 void init_uartlite();
 void init_timer();
 void init_alarm();
-void init_vga();
-void init_i8042();
-void init_audio();
-void init_disk();
-void init_sdcard();
-void init_flash();
-
-void send_key(uint8_t, bool);
-void vga_update_screen();
 
 static int device_update_flag = false;
 
@@ -28,7 +19,6 @@ void device_update() {
     return;
   }
   device_update_flag = false;
-  IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
@@ -60,14 +50,6 @@ void init_device() {
   IFDEF(CONFIG_HAS_SERIAL, init_serial());
   IFDEF(CONFIG_HAS_UARTLITE, init_uartlite());
   IFDEF(CONFIG_HAS_TIMER, init_timer());
-  IFDEF(CONFIG_HAS_VGA, init_vga());
-  IFDEF(CONFIG_HAS_KEYBOARD, init_i8042());
-  IFDEF(CONFIG_HAS_AUDIO, init_audio());
-  IFDEF(CONFIG_HAS_DISK, init_disk());
-  IFDEF(CONFIG_HAS_SDCARD, init_sdcard());
-#ifndef CONFIG_SHARE
-  IFDEF(CONFIG_HAS_FLASH, init_flash(CONFIG_FLASH_IMG_PATH));
-#endif
 
   add_alarm_handle(set_device_update_flag);
   init_alarm();

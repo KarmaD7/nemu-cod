@@ -107,155 +107,6 @@ void longjmp_exception(int ex_cause) {
   longjmp_exec(NEMU_EXEC_EXCEPTION);
 }
 
-#ifdef CONFIG_PERF_OPT
-#define FILL_EXEC_TABLE(name) [concat(EXEC_ID_, name)] = &&concat(exec_, name),
-
-#define rtl_j(s, target) do { \
-  IFDEF(CONFIG_ENABLE_INSTR_CNT, n -= s->idx_in_bb); \
-  s = s->tnext; \
-  goto end_of_bb; \
-} while (0)
-#define rtl_jr(s, target) do { \
-  IFDEF(CONFIG_ENABLE_INSTR_CNT, n -= s->idx_in_bb); \
-  s = jr_fetch(s, *(target)); \
-  goto end_of_bb; \
-} while (0)
-#define rtl_jrelop(s, relop, src1, src2, target) do { \
-  IFDEF(CONFIG_ENABLE_INSTR_CNT, n -= s->idx_in_bb); \
-  if (interpret_relop(relop, *src1, *src2)) s = s->tnext; \
-  else s = s->ntnext; \
-  goto end_of_bb; \
-} while (0)
-
-#define rtl_priv_next(s) do { \
-  if (g_sys_state_flag) { \
-    s = (g_sys_state_flag & SYS_STATE_FLUSH_TCACHE) ? \
-      tcache_handle_flush(s->snpc) : s + 1; \
-    g_sys_state_flag = 0; \
-    goto end_of_loop; \
-  } \
-} while (0)
-
-#define rtl_priv_jr(s, target) do { \
-  IFDEF(CONFIG_ENABLE_INSTR_CNT, n -= s->idx_in_bb); \
-  s = jr_fetch(s, *(target)); \
-  if (g_sys_state_flag & SYS_STATE_FLUSH_TCACHE) { \
-    s = tcache_handle_flush(s->pc); \
-    g_sys_state_flag = 0; \
-  } \
-  goto end_of_loop; \
-} while (0)
-
-static const void **g_exec_table;
-
-Decode* tcache_jr_fetch(Decode *s, vaddr_t jpc);
-Decode* tcache_decode(Decode *s);
-void tcache_handle_exception(vaddr_t jpc);
-Decode* tcache_handle_flush(vaddr_t snpc);
-
-static inline
-Decode* jr_fetch(Decode *s, vaddr_t target) {
-  if (likely(s->tnext->pc == target)) return s->tnext;
-  if (likely(s->ntnext->pc == target)) return s->ntnext;
-  return tcache_jr_fetch(s, target);
-}
-
-static inline void debug_difftest(Decode *_this, Decode *next) {
-  IFDEF(CONFIG_IQUEUE, iqueue_commit(_this->pc, (void *)&_this->isa.instr.val, _this->snpc - _this->pc));
-  IFDEF(CONFIG_DEBUG, debug_hook(_this->pc, _this->logbuf));
-  IFDEF(CONFIG_DIFFTEST, save_globals(next));
-  IFDEF(CONFIG_DIFFTEST, cpu.pc = next->pc);
-  IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, next->pc));
-}
-
-uint64_t per_bb_profile(Decode *s) {
-  uint64_t abs_inst_count = get_abs_instr_count();
-  if (profiling_state == SimpointProfiling && profiling_started) {
-    simpoint_profiling(s->pc, true, abs_inst_count);
-  }
-
-  extern bool able_to_take_cpt();
-  if (checkpoint_taking && profiling_started && (force_cpt_mmode || able_to_take_cpt())) {
-    // update cpu pc!
-    cpu.pc = s->pc;
-
-    extern bool try_take_cpt(uint64_t icount);
-    bool taken = try_take_cpt(abs_inst_count);
-    if (taken) {
-      Log("Should take checkpoint on pc 0x%x", s->pc);
-    }
-  }
-  return abs_inst_count;
-}
-
-static int execute(int n) {
-  Logtb("Will execute %i instrs\n", n);
-  static const void* local_exec_table[TOTAL_INSTR] = {
-    MAP(INSTR_LIST, FILL_EXEC_TABLE)
-  };
-  static int init_flag = 0;
-  Decode *s = prev_s;
-
-  if (likely(init_flag == 0)) {
-    g_exec_table = local_exec_table;
-    extern Decode* tcache_init(const void *exec_nemu_decode, vaddr_t reset_vector);
-    s = tcache_init(&&exec_nemu_decode, cpu.pc);
-    IFDEF(CONFIG_MODE_SYSTEM, hosttlb_init());
-    init_flag = 1;
-  }
-
-  __attribute__((unused)) Decode *this_s = NULL;
-  while (true) {
-#if defined(CONFIG_DEBUG) || defined(CONFIG_DIFFTEST) || defined(CONFIG_IQUEUE)
-    this_s = s;
-#endif
-    __attribute__((unused)) rtlreg_t ls0, ls1, ls2;
-
-    goto *(s->EHelper);
-
-#undef s0
-#undef s1
-#undef s2
-#define s0 &ls0
-#define s1 &ls1
-#define s2 &ls2
-
-#include "isa-exec.h"
-
-def_EHelper(nemu_decode) {
-  s = tcache_decode(s);
-  continue;
-}
-
-end_of_bb:
-    IFDEF(CONFIG_ENABLE_INSTR_CNT, n_remain = n);
-    IFNDEF(CONFIG_ENABLE_INSTR_CNT, n --);
-
-    // Here is per bb action
-    uint64_t abs_inst_count = per_bb_profile(s);
-    Logtb("prev pc = 0x%x, pc = 0x%x", prev_s->pc, s->pc);
-    Logtb("Executed %ld instructions in total, pc: 0x%x\n", (int64_t) abs_inst_count, prev_s->pc);
-
-    if (unlikely(n <= 0)) break;
-
-    // Here is per inst action
-    // Because every instruction executed goes here, don't put Log here to improve performance
-    def_finish();
-    Logti("prev pc = 0x%x, pc = 0x%x", prev_s->pc, s->pc);
-    debug_difftest(this_s, s);
-  }
-
-end_of_loop:
-  // Here is per loop action and some priv instruction action
-  Loge("end_of_loop: prev pc = 0x%x, pc = 0x%x, total insts: %lu, remain: %lu",
-       prev_s->pc, s->pc, get_abs_instr_count(), n_remain_total);
-  per_bb_profile(s);
-
-  debug_difftest(this_s, s);
-  prev_s = s;
-  return n;
-}
-#else
 #define FILL_EXEC_TABLE(name) [concat(EXEC_ID_, name)] = concat(exec_, name),
 
 #define rtl_priv_next(s)
@@ -285,7 +136,7 @@ static int execute(int n) {
   }
   return n;
 }
-#endif
+
 
 void fetch_decode(Decode *s, vaddr_t pc) {
   s->pc = pc;
@@ -298,13 +149,6 @@ void fetch_decode(Decode *s, vaddr_t pc) {
         s->pc, log_bytebuf, 40 - (12 + 3 * (int)(s->snpc - s->pc)), "", log_asmbuf));
   s->EHelper = g_exec_table[idx];
 }
-
-#ifdef CONFIG_PERF_OPT
-static void update_global() {
-  update_instr_cnt();
-  cpu.pc = prev_s->pc;
-}
-#endif
 
 /* Simulate how the CPU works. */
 void cpu_exec(uint64_t n) {
@@ -328,18 +172,15 @@ void cpu_exec(uint64_t n) {
   if ((cause = setjmp(jbuf_exec))) {
     n_remain -= prev_s->idx_in_bb - 1;
     // Here is exception handle
-#ifdef CONFIG_PERF_OPT
-    update_global();
-#endif
     Loge("After update_global, n_remain: %i, n_remain_total: %li", n_remain, n_remain_total);
   }
 
   while (nemu_state.state == NEMU_RUNNING &&
       MUXDEF(CONFIG_ENABLE_INSTR_CNT, n_remain_total > 0, true)) {
-#ifdef CONFIG_DEVICE
-    extern void device_update();
-    device_update();
-#endif
+// #ifdef CONFIG_DEVICE
+//     extern void device_update();
+//     device_update();
+// #endif
 
     if (cause == NEMU_EXEC_EXCEPTION) {
       Loge("Handle NEMU_EXEC_EXCEPTION");
