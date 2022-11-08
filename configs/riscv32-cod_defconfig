@@ -2,8 +2,6 @@
 # Automatically generated file; DO NOT EDIT.
 # NEMU Configuration Menu
 #
-# CONFIG_ISA_x86 is not set
-# CONFIG_ISA_mips32 is not set
 CONFIG_ISA_riscv32=y
 # CONFIG_ISA_riscv64 is not set
 CONFIG_ISA="riscv32"
@@ -40,7 +38,7 @@ CONFIG_CC_LTO=y
 #
 # Testing and Debugging
 #
-CONFIG_DEBUG=y
+# CONFIG_DEBUG is not set
 # CONFIG_DIFFTEST is not set
 CONFIG_DIFFTEST_REF_PATH="none"
 CONFIG_DIFFTEST_REF_NAME="none"
@@ -50,7 +48,6 @@ CONFIG_DIFFTEST_REF_NAME="none"
 # CONFIG_TRANSLOG is not set
 # CONFIG_EXITLOG is not set
 # CONFIG_TRACE_INST is not set
-# CONFIG_TRACE_INST_DASM is not set
 # CONFIG_TRACE_BB is not set
 # end of Testing and Debugging
 

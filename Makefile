@@ -62,10 +62,6 @@ else
 SHARE = 1
 endif
 
-ifdef CONFIG_DEVICE
-LDFLAGS += -lSDL2
-endif
-
 ifdef CONFIG_FPU_SOFT
 SOFTFLOAT = resource/softfloat/build/softfloat.a
 ifeq ($(ISA),riscv64)
