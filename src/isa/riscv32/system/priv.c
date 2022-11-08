@@ -234,7 +234,7 @@ static inline void csr_write(word_t *dest, word_t src) {
     mmu_tlb_flush(0);
 #endif
   } else if (is_write(satp)) {
-    printf("satp %x\n", MASKED_SATP(src));
+    // printf("satp %x\n", MASKED_SATP(src));
     *dest = MASKED_SATP(src);
   } else { *dest = src; }
 

@@ -50,7 +50,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <iostream3/zfstream.h>
 
 #include <cassert>
 #include <cerrno>
@@ -225,15 +224,8 @@ OutputDirectory::open(const std::string &name,
 {
     OutputStream *os;
 
-    if (!no_gz && name.find(".gz", name.length() - 3) < name.length()) {
-        // Although we are creating an output stream, we still need to pass the
-        // correct mode for gzofstream as this used directly to set the file
-        // mode.
-        mode |= std::ios::out;
-        os = new OutputFile<gzofstream>(*this, name, mode, recreateable);
-    } else {
-        os = new OutputFile<ofstream>(*this, name, mode, recreateable);
-    }
+
+    os = new OutputFile<ofstream>(*this, name, mode, recreateable);
 
     files[name] = os;
 

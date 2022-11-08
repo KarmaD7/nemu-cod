@@ -7,16 +7,16 @@
 struct ExecutionGuide {
   // force raise exception
   bool force_raise_exception;
-  uint64_t exception_num;
-  uint64_t mtval;
-  uint64_t stval;
+  uint32_t exception_num;
+  uint32_t mtval;
+  uint32_t stval;
   // force set jump target
   bool force_set_jump_target;
-  uint64_t jump_target;
+  uint32_t jump_target;
 };
 
 struct DebugInfo {
-  uint64_t current_pc;
+  uint32_t current_pc;
 };
 
 #ifdef CONFIG_QUERY_REF
@@ -48,6 +48,8 @@ typedef struct {
   uint32_t mtval, stval, mtvec, stvec;
   uint32_t mode;
   bool INTR;
+  bool guided_exec;
+  struct ExecutionGuide execution_guide;
 #endif
 } riscv32_CPU_state;
 

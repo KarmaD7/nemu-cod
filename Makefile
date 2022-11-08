@@ -28,18 +28,12 @@ SRCS-$(CONFIG_DEVICE) += src/device/device.c src/device/alarm.c src/device/intr.
 SRCS-$(CONFIG_HAS_SERIAL) += src/device/serial.c
 SRCS-$(CONFIG_HAS_UARTLITE) += src/device/uartlite.c
 SRCS-$(CONFIG_HAS_TIMER) += src/device/timer.c
-SRCS-$(CONFIG_HAS_KEYBOARD) += src/device/keyboard.c
-SRCS-$(CONFIG_HAS_VGA) += src/device/vga.c
-SRCS-$(CONFIG_HAS_AUDIO) += src/device/audio.c
-SRCS-$(CONFIG_HAS_DISK) += src/device/disk.c
-SRCS-$(CONFIG_HAS_SDCARD) += src/device/sdcard.c
-SRCS-$(CONFIG_HAS_FLASH) += src/device/flash.c
 
 SRCS-y += $(shell find $(DIRS-y) -name "*.c")
 
 SRCS = $(SRCS-y)
 
-DIRS-cpp = src/base src/iostream3
+DIRS-cpp = src/base
 XSRCS = $(shell find $(DIRS-cpp) -name "*.cpp")
 
 CC = $(call remove_quote,$(CONFIG_CC))

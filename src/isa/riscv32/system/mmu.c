@@ -71,6 +71,15 @@ static inline uintptr_t VPNi(vaddr_t va, int i) {
 //   }
 //   return MMU_DIRECT;
 // }
+#ifdef CONFIG_SHARE
+void isa_misalign_data_addr_check(vaddr_t vaddr, int len, int type) {
+  if (unlikely((vaddr & (len - 1)) != 0)) {
+    int ex =type == MEM_TYPE_WRITE ? EX_SAM : EX_LAM;
+    INTR_TVAL_REG(ex) = vaddr;
+    longjmp_exception(ex);
+  }
+}
+#endif
 
 static inline int TLB_hash(uint32_t vpn) {
   return vpn % ARRLEN(TLB);
@@ -91,8 +100,8 @@ static inline bool check_permission(PTE *pte, bool ok, vaddr_t vaddr, int type) 
     Logtr("Translate for instr reading");
 #ifdef CONFIG_SHARE
 //  update a/d by exception
-    bool update_ad = !pte->a;
-    if (update_ad && ok && pte->x)
+    bool update_ad = !pte->access;
+    if (update_ad && ok && pte->exec)
       Logtr("raise exception to update ad for ifecth");
 #else
     bool update_ad = false;
@@ -108,7 +117,7 @@ static inline bool check_permission(PTE *pte, bool ok, vaddr_t vaddr, int type) 
     // bool can_load = pte->read || (mstatus->mxr && pte->x); we don't use mxr now
     bool can_load = pte->read;
 #ifdef CONFIG_SHARE
-    bool update_ad = !pte->a;
+    bool update_ad = !pte->access;
     if (update_ad && ok && can_load)
       Logtr("raise exception to update ad for load");
 #else
@@ -125,8 +134,8 @@ static inline bool check_permission(PTE *pte, bool ok, vaddr_t vaddr, int type) 
     }
   } else {
 #ifdef CONFIG_SHARE
-    bool update_ad = !pte->a || !pte->d;
-   if (update_ad && ok && pte->w) Logtr("raise exception to update ad for store");
+    bool update_ad = !pte->access || !pte->dirty;
+   if (update_ad && ok && pte->write) Logtr("raise exception to update ad for store");
 #else
     bool update_ad = false;
 #endif
@@ -157,7 +166,7 @@ static paddr_t ptw(vaddr_t vaddr, int type) {
 #endif
 #ifdef CONFIG_SHARE
     if (unlikely(dynamic_config.debug_difftest)) {
-      fprintf(stderr, "[NEMU] ptw: level %d, vaddr 0x%lx, pg_base 0x%lx, p_pte 0x%lx, pte.val 0x%lx\n",
+      fprintf(stderr, "[NEMU] ptw: level %d, vaddr 0x%x, pg_base 0x%x, p_pte 0x%x, pte.val 0x%x\n",
         level, vaddr, pg_base, p_pte, pte.val);
     }
 #endif

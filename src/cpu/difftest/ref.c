@@ -73,9 +73,9 @@ void difftest_csrcpy(void *dut, bool direction) {
   isa_difftest_csrcpy(dut, direction);
 }
 
-void difftest_uarchstatus_cpy(void *dut, bool direction) {
-  isa_difftest_uarchstatus_cpy(dut, direction);
-}
+// void difftest_uarchstatus_cpy(void *dut, bool direction) {
+//   isa_difftest_uarchstatus_cpy(dut, direction);
+// }
 
 int difftest_store_commit(uint64_t *saddr, uint64_t *sdata, uint8_t *smask) {
 #ifdef CONFIG_DIFFTEST_STORE_COMMIT
