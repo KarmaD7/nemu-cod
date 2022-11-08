@@ -1,6 +1,4 @@
 #include <isa.h>
-#include <checkpoint/cpt_env.h>
-#include <checkpoint/profiling.h>
 #include <memory/image_loader.h>
 #include <memory/paddr.h>
 #include <getopt.h>
@@ -78,52 +76,6 @@ static inline int parse_args(int argc, char *argv[]) {
       case 'd': diff_so_file = optarg; break;
       case 1: img_file = optarg; return optind - 1;
 
-      case 'D': output_base_dir = optarg; break;
-      case 'w': workload_name = optarg; break;
-      case 'C': config_name = optarg; break;
-
-      case 'c':
-        checkpoint_restoring = true;
-        Log("Restoring from checkpoint");
-        break;
-
-      case 'r':
-        restorer = optarg;
-        break;
-
-      case 'S':
-        assert(profiling_state == NoProfiling);
-        simpoints_dir = optarg;
-        profiling_state = SimpointCheckpointing;
-        checkpoint_taking = true;
-        Log("Taking simpoint checkpoints");
-        break;
-
-      case 'u':
-        checkpoint_taking = true;
-        break;
-
-      case 5: sscanf(optarg, "%lu", &checkpoint_interval); break;
-
-      case 3:
-        assert(profiling_state == NoProfiling);
-        profiling_state = SimpointProfiling;
-        Log("Doing Simpoint Profiling");
-        break;
-
-      case 6:
-        // start profiling/checkpointing right after boot,
-        // instead of waiting for the pseudo inst to notify NEMU.
-        profiling_started = true;
-        break;
-
-      case 7:
-        Log("Force to take checkpoint on m mode. You should know what you are doing!");
-        force_cpt_mmode = true;
-        break;
-
-      case 4: sscanf(optarg, "%d", &cpt_id); break;
-
       default:
         printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
         printf("\t-b,--batch              run with batch mode\n");
@@ -163,19 +115,7 @@ void init_monitor(int argc, char *argv[]) {
 #else
   parse_args(argc, argv);
 #endif
-
-  extern void init_path_manager();
-  extern void simpoint_init();
-  extern void init_serializer();
-  extern void unserialize();
-
-  bool output_features_enabled = checkpoint_taking || profiling_state == SimpointProfiling;
-  if (output_features_enabled) {
-    init_path_manager();
-    simpoint_init();
-    init_serializer();
-  }
-
+  
   /* Open the log file. */
   init_log(log_file);
 
@@ -196,37 +136,8 @@ void init_monitor(int argc, char *argv[]) {
   uint64_t bbl_start;
   long img_size; // how large we should copy for difftest
 
-  if (checkpoint_restoring) {
-    // When restoring cpt, gcpt restorer from cmdline is optional,
-    // because a gcpt already ships a restorer
-    assert(img_file != NULL);
-
-    img_size = MEMORY_SIZE;
-    bbl_start = MEMORY_SIZE; // bbl size should never be used, let it crash if used
-
-    load_img(img_file, "Gcpt file form cmdline", RESET_VECTOR, 0);
-    load_img(restorer, "Gcpt restorer form cmdline", RESET_VECTOR, 0xf00);
-
-  } else if (checkpoint_taking) {
-    // boot: jump to restorer --> restorer jump to bbl
-    assert(img_file != NULL);
-    assert(restorer != NULL);
-
-    bbl_start = RESET_VECTOR + CONFIG_BBL_OFFSET_WITH_CPT;
-
-    long restorer_size = load_img(restorer, "Gcpt restorer form cmdline", RESET_VECTOR, 0xf00);
-    long bbl_size = load_img(img_file, "image (bbl/bare metal app) from cmdline", bbl_start, 0);
-    img_size = restorer_size + bbl_size;
-  } else {
-    if (restorer != NULL) {
-      Log("You are providing a gcpt restorer without specify ``restoring cpt'' or ``taking cpt''! "
-      "If you don't know what you are doing, this will corrupt your memory/program. "
-      "If you want to take cpt or restore cpt, you must EXPLICITLY add corresponding options");
-      panic("Providing cpt restorer without restoring cpt or taking cpt\n");
-    }
-    bbl_start = RESET_VECTOR;
-    img_size = load_img(img_file, "image (bbl/bare metal app) from cmdline", bbl_start, 0);
-  }
+  bbl_start = RESET_VECTOR;
+  img_size = load_img(img_file, "image (bbl/bare metal app) from cmdline", bbl_start, 0);
 
   /* Initialize differential testing. */
   init_difftest(diff_so_file, img_size, difftest_port);

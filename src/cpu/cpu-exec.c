@@ -1,4 +1,3 @@
-#include <checkpoint/profiling.h>
 #include <cpu/cpu.h>
 #include <cpu/exec.h>
 #include <cpu/difftest.h>
