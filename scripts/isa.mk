@@ -1,4 +1,4 @@
-ISA ?= x86
+ISA ?= riscv32
 ISAS = $(shell ls $(NEMU_HOME)/src/isa/)
 ifeq ($(filter $(ISAS), $(ISA)), ) # ISA must be valid
 $(error Invalid ISA=$(ISA). Supported: $(ISAS))
